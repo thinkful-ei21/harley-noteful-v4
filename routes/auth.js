@@ -5,7 +5,7 @@ const passport = require('passport');
 
 const options = {session: false, failWithError: true};
 
-const localAuth = passport.authenticate('../passport/local', options);
+const localAuth = passport.authenticate('local', options);
 
 const router = express.Router();
 

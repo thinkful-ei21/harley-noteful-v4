@@ -19,8 +19,15 @@ function createAuthToken (user) {
   });
 }
 
+const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
+
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/login', localAuth, function (req, res) {
+  const authToken = createAuthToken(req.user);
+  res.json({ authToken });
+});
+
+router.post('/refresh', jwtAuth, (req, res) => {
   const authToken = createAuthToken(req.user);
   res.json({ authToken });
 });

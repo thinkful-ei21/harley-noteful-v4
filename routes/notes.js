@@ -34,7 +34,7 @@ router.get('/', (req, res, next) => {
   }
 
   Note.find(filter)
-    .populate('tags')
+    //.populate('tags')
     .sort({ updatedAt: 'desc' })
     .then(results => {
       res.json(results);

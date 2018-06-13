@@ -7,7 +7,9 @@ const { MONGODB_URI } = require('../config');
 const Note = require('../models/note');
 const Folder = require('../models/folder');
 const Tag = require('../models/tag');
+const User = require('../models/user');
 
+const seedUsers = require('../db/seed/users');
 const seedNotes = require('../db/seed/notes');
 const seedFolders = require('../db/seed/folders');
 const seedTags = require('../db/seed/tags');
@@ -21,8 +23,10 @@ mongoose.connect(MONGODB_URI)
   .then(() => {
     console.info('Seeding Database');
     return Promise.all([
-
       Note.insertMany(seedNotes),
+
+      User.insertMany(seedUsers),
+      User.createIndexes(),
 
       Folder.insertMany(seedFolders),
       Folder.createIndexes(),

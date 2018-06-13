@@ -2,24 +2,24 @@
   {
     "_id": "333333333333333333333300",
     "fullname": "Bob User",
-    "username": "bobuser",
-    "password": "password"
+    "username": "baseball",
+    "password": "$2a$10$irpnhHoRRh4RDFoY7/QWcOKj3pjYlGWR2SLdWeAPORtKQIZ4jVxEW"
   },
   {
     "_id": "333333333333333333333301",
     "fullname": "Pat User",
-    "username": "patuser",
-    "password": "password"
+    "username": "password",
+    "password": "$2a$10$F2JKVspfeycgMqDJa6ILTuxGs4YaXyH1Xjx7N.Gh7tPt9XOAVFWYG"
   },
   {
     "_id": "333333333333333333333302",
     "fullname": "Jane User",
-    "username": "janeuser",
-    "password": "password"
+    "username": "redstapler",
+    "password": "$2a$10$6awwhJRKhNRHm9WJE2bIhOTT6IxxzzKlDJFM.HX3YsfB3k9GDCT3i"
   },
   {
     "_id": "333333333333333333333303",
-    "username": "anonuser",
-    "password": "password"
+    "username": "iamtheone",
+    "password": "$2a$10$fdiN2a36.Lg80eRjHYH9GeodYXwMjCONjOi5vkfN4.rdIj9oo5zGi"
   }
 ]

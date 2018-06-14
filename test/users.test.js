@@ -71,27 +71,124 @@ describe.only('Noteful API - Users', function () {
         const testUser = { password, fullname };
         return chai.request(app).post('/api/users').send(testUser)
           .then(res => {
-
-            /**
-             * CREATE YOUR ASSERTIONS HERE
-             */
-
+            expect(res).to.have.status(422);
+            expect(res.body.message).to.equal(`Missing 'username' in request body`);
           });
       });
 
       /**
        * COMPLETE ALL THE FOLLOWING TESTS
        */
-      it('Should reject users with missing password');
-      it('Should reject users with non-string username');
-      it('Should reject users with non-string password');
-      it('Should reject users with non-trimmed username');
-      it('Should reject users with non-trimmed password');
-      it('Should reject users with empty username');
-      it('Should reject users with password less than 8 characters');
-      it('Should reject users with password greater than 72 characters');
-      it('Should reject users with duplicate username');
-      it('Should trim fullname');
+      it('Should reject users with missing password', function () {
+        const testUser = { username, fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.message).to.equal(`Missing 'password' in request body`);
+          });
+      });
+      it('Should reject users with non-string username', function () {
+        const testUser = { username: 12, password, fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.message).to.equal('Incorrect field type: expected string');
+          });
+      });
+      it('Should reject users with non-string password', function () {
+        const testUser = { username, password: 12, fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.message).to.equal('Incorrect field type: expected string');
+          });
+      });
+      it('Should reject users with non-trimmed username', function () {
+        const testUser = { username: ` ${username}`, password, fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.reason).to.equal('ValidationError');
+            expect(res.body.location).to.equal('username');
+            expect(res.body.message).to.equal('Cannot start or end with whitespace');
+          });
+      });
+      it('Should reject users with non-trimmed password', function () {
+        const testUser = { username, password: ` ${password}`, fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.reason).to.equal('ValidationError');
+            expect(res.body.location).to.equal('password');
+            expect(res.body.message).to.equal('Cannot start or end with whitespace');
+          });
+      });
+      it('Should reject users with empty username', function () {
+        const testUser = { username: '', password, fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.reason).to.equal('ValidationError');
+            expect(res.body.location).to.equal('username');
+            expect(res.body.message).to.equal('Must be at least 1 characters long');
+          });
+      });
+      it('Should reject users with password less than 8 characters', function () {
+        const testUser = { username, password: '12', fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.reason).to.equal('ValidationError');
+            expect(res.body.location).to.equal('password');
+            expect(res.body.message).to.equal('Must be at least 8 characters long');
+          });
+      });
+      it('Should reject users with password greater than 72 characters', function () {
+        const testUser = { username, 
+          password: '12111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111', 
+          fullname };
+        return chai.request(app).post('/api/users').send(testUser)
+          .then(res => {
+            expect(res).to.have.status(422);
+            expect(res.body.reason).to.equal('ValidationError');
+            expect(res.body.location).to.equal('password');
+            expect(res.body.message).to.equal('Must be at most 72 characters long');
+          });
+      });
+      it('Should reject users with duplicate username', function () {
+        const testUser = { username, password, fullname };
+
+        return chai
+          .request(app)
+          .post('/api/users')
+          .send(testUser)
+          .then(() => {
+            return chai.request(app).post('/api/users').send(testUser);
+          })
+          .then(res => {
+            expect(res).to.have.status(400);
+            expect(res.body.message).to.equal('The username already exists');
+          });
+      });
+      it('Should trim fullname', function () {
+        const testUser = { username, password, fullname: ` ${fullname}` };
+
+        let res;
+        return chai
+          .request(app)
+          .post('/api/users')
+          .send(testUser)
+          .then(_res => {
+            res = _res;
+            expect(res).to.have.status(201);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.keys('id', 'username', 'fullname');
+
+            expect(res.body.id).to.exist;
+            expect(res.body.username).to.equal(testUser.username);
+            expect(res.body.fullname).to.equal(testUser.fullname);
+          });
+      });
     });
   });
 });

@@ -21,9 +21,11 @@ router.post('/users', (req, res, next) => {
   const stringFields = ['fullname', 'username', 'password'];
   const badType = stringFields.find(field => {
     if (field in req.body) {
-      !(req.body[field] instanceof String);
+      return typeof req.body[field] !== 'string';
     }
   });
+
+  //console.log(badType);
 
   if (badType) {
     return res.status(422).json({

@@ -90,6 +90,11 @@ router.post('/', (req, res, next) => {
   }
 
   if (tags) {
+    if (!(tags instanceof Array)) {
+      const err = new Error('The tags property must be an array');
+      err.status = 400;
+      return next(err);
+    }
     tags.forEach((tag) => {
       if (!mongoose.Types.ObjectId.isValid(tag)) {
         const err = new Error('The tags `id` is not valid');
@@ -184,6 +189,11 @@ router.put('/:id', (req, res, next) => {
   }
 
   if (tags) {
+    if (!(tags instanceof Array)) {
+      const err = new Error('The tags property must be an array');
+      err.status = 400;
+      return next(err);
+    }
     tags.forEach((tag) => {
       if (!mongoose.Types.ObjectId.isValid(tag)) {
         const err = new Error('The tags `id` is not valid');

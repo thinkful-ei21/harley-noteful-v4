@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 
 const Note = require('../models/note');
+const Folder = require('../models/folder');
+const Tag = require('../models/tag');
 
 const router = express.Router();
 router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
@@ -81,7 +83,7 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-  if (folderId && !mongoose.Types.ObjectId.isValid(folderId)) {
+  if (folderId && (!mongoose.Types.ObjectId.isValid(folderId))) {
     const err = new Error('The `folderId` is not valid');
     err.status = 400;
     return next(err);
@@ -97,18 +99,63 @@ router.post('/', (req, res, next) => {
     });
   }
 
-  const newNote = { title, content, folderId, tags, userId };
+  const folderCheck = new Promise((resolve, reject) => {
+    if (folderId){
+      return Folder.findById(folderId)
+        .then(result => {
+          if (result.userId.toString() !== userId) {
+            const err = new Error('The `folderId` is not yours');
+            err.status = 400;
+            return reject(err);
+          } else {
+            return resolve();
+          }
+        });
+    } else {
+      return resolve();
+    }
+  });
 
-  Note.create(newNote)
-    .then(result => {
-      res
-        .location(`${req.originalUrl}/${result.id}`)
-        .status(201)
-        .json(result);
+  const tagCheck = new Promise((resolve, reject) => {
+    if(tags) {
+      return Tag.find({userId})
+        .then(results => {
+          const userTags = results.map(result => result.id);
+          tags.forEach((tag) => {
+            if (!userTags.includes(tag)) {
+              console.log('tag conflict detected');
+              const err = new Error('The tags `id` is not yours');
+              err.status = 400;
+              return reject(err);
+            }
+          });
+          return resolve();
+        });
+    } else {
+      return resolve();
+    }
+  });
+
+  folderCheck
+    .then(() => {
+      return tagCheck;
+    })
+    .then(() => {
+      const newNote = { title, content, folderId, tags, userId };
+
+      return Note.create(newNote)
+        .then(result => {
+          res
+            .location(`${req.originalUrl}/${result.id}`)
+            .status(201)
+            .json(result);
+        });
     })
     .catch(err => {
       next(err);
     });
+
+  
 });
 
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
@@ -137,24 +184,67 @@ router.put('/:id', (req, res, next) => {
   }
 
   if (tags) {
-    const badIds = tags.map((tag) => !mongoose.Types.ObjectId.isValid(tag));
-    if (badIds.length) {
-      const err = new Error('The tags `id` is not valid');
-      err.status = 400;
-      return next(err);
-    }
+    tags.forEach((tag) => {
+      if (!mongoose.Types.ObjectId.isValid(tag)) {
+        const err = new Error('The tags `id` is not valid');
+        err.status = 400;
+        return next(err);
+      }
+    });
   }
 
-  const updateNote = { title, content, folderId, tags };
-  const filter = { _id: id, userId};
+  const folderCheck = new Promise((resolve, reject) => {
+    if (folderId){
+      return Folder.findById(folderId)
+        .then(result => {
+          if (result.userId.toString() !== userId) {
+            const err = new Error('The `folderId` is not yours');
+            err.status = 400;
+            return reject(err);
+          } else {
+            return resolve();
+          }
+        });
+    } else {
+      return resolve();
+    }
+  });
 
-  Note.findOneAndUpdate(filter, updateNote, { new: true })
-    .then(result => {
-      if (result) {
-        res.json(result);
-      } else {
-        next();
-      }
+  const tagCheck = new Promise((resolve, reject) => {
+    if(tags) {
+      return Tag.find({userId})
+        .then(results => {
+          const userTags = results.map(result => result.id);
+          tags.forEach((tag) => {
+            if (!userTags.includes(tag)) {
+              const err = new Error('The tags `id` is not yours');
+              err.status = 400;
+              return reject(err);
+            }
+          });
+          return resolve();
+        });
+    } else {
+      return resolve();
+    }
+  });
+
+  folderCheck
+    .then(() => {
+      return tagCheck;
+    })
+    .then(() => {
+      const updateNote = { title, content, folderId, tags };
+      const filter = { _id: id, userId};
+
+      return Note.findOneAndUpdate(filter, updateNote, { new: true })
+        .then(result => {
+          if (result) {
+            res.json(result);
+          } else {
+            next();
+          }
+        });
     })
     .catch(err => {
       next(err);

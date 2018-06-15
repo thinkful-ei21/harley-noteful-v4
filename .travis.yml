@@ -1,3 +1,11 @@
 language: node_js
 node_js: node
-services: mongodb
+services: 
+  - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: H9KwkUrwk3DOH6WV1eVChT1phA6OkrsMEYXmuMnqClVycgkzrkVR8pcpuTTlj51p6rJrGi+absZL0XtE4sVjjoJjlIvgqOzrgV1fY22jYvOW7tBhCIApcLQ5oOTKdgeNO2G/TIhXdw+gVEqVfxzfFz52aypI/Dpsov4QCoeUQqkdFqgZUe0beQp/KaX4F9dr9BFhdVp0uJXJO36a7o45R9cZwZ5hzmHw3GY3cqywhx4cO/dN6vqTaYPnNSwLSU2z4Ea44qTqH0hjq+KJT3vF8Fidgzcd2X91zKIU4HS/NFaJWJ+xzVZiMkWCTD2a1Zlr6DImn5cINvkfaJfirSXV1LM5zCm1KQUDobuqZVUxNVnhA9fghP5ZiAsDVlnLwuIzH1KpINvaJemv3hAHPAS3NHlTqS73vIXihQZCMovB7ahShMa5VEAk025VtE81sIreyGPInV35tA6Us2jTEAy6GxoBJ3Dtk+3KeMS6OkaHuSJIsQF4A/ysHvtdy+KuVT95PH8PB657bJHaVgcuWYwNj0LoFz/YvWaXHJ7QkET+MNncPAI1PVL1/SfU+tLa0kA5RR6jyciZKzVcK2lpnjE4zCON8ea0Rc8YgqHIkfLmO6qUyeKSLnLy0j2/Wyex9dsb/P6ZjVfmGnkWaRnEZQmyNmur7iz/1/VWL58650YDEXo=
+  app: harley-noteful-v3
+  on:
+    repo: thinkful-ei21/harley-noteful-v4

@@ -92,7 +92,7 @@ describe.only('Noteful API - Folders', function () {
 
     it('should return correct folder', function () {
       let data;
-      return Folder.findOne()
+      return Folder.findOne({ userId: user.id })
         .then(_data => {
           data = _data;
           return chai.request(app)
@@ -175,7 +175,7 @@ describe.only('Noteful API - Folders', function () {
     });
 
     it('should return an error when given a duplicate name', function () {
-      return Folder.findOne()
+      return Folder.findOne({ userId: user.id })
         .then(data => {
           const newItem = { name: data.name };
           return chai.request(app)
@@ -198,7 +198,7 @@ describe.only('Noteful API - Folders', function () {
     it('should update the folder', function () {
       const updateItem = { name: 'Updated Name' };
       let data;
-      return Folder.findOne()
+      return Folder.findOne({ userId: user.id })
         .then(_data => {
           data = _data;
           return chai.request(app)
@@ -247,7 +247,7 @@ describe.only('Noteful API - Folders', function () {
     it('should return an error when missing "name" field', function () {
       const updateItem = {};
       let data;
-      return Folder.findOne()
+      return Folder.findOne({ userId: user.id })
         .then(_data => {
           data = _data;
           return chai.request(app)
@@ -264,7 +264,7 @@ describe.only('Noteful API - Folders', function () {
     });
 
     it('should return an error when given a duplicate name', function () {
-      return Folder.find().limit(2)
+      return Folder.find({ userId: user.id }).limit(2)
         .then(results => {
           const [item1, item2] = results;
           item1.name = item2.name;

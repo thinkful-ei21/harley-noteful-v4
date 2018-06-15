@@ -83,7 +83,8 @@ router.post('/users', (req, res, next) => {
     });
   }
 
-  const { fullname, username, password } = req.body;
+  let { fullname, username, password } = req.body;
+  fullname = fullname.trim();
 
   const newUser = { fullname, username, password };
 

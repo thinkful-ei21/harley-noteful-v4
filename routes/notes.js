@@ -128,7 +128,7 @@ router.post('/', (req, res, next) => {
           const userTags = results.map(result => result.id);
           tags.forEach((tag) => {
             if (!userTags.includes(tag)) {
-              console.log('tag conflict detected');
+              //console.log('tag conflict detected');
               const err = new Error('The tags `id` is not yours');
               err.status = 400;
               return reject(err);

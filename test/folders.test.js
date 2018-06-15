@@ -18,7 +18,7 @@ const { TEST_MONGODB_URI } = require('../config');
 chai.use(chaiHttp);
 const expect = chai.expect;
 
-describe.only('Noteful API - Folders', function () {
+describe('Noteful API - Folders', function () {
   let token;
   let user;
 
